@@ -6,20 +6,12 @@ CONFIG -= qt
 
 #QMAKE_CXXFLAGS += -std=c++17
 
-SOURCES += \
-    main.c
-     #main2.cpp
+SOURCES += main.c
+SOURCES += #main2.cpp
 
 
 
-INCLUDEPATH += $$PWD/../../src
-HEADERS += $$PWD/../../src/csc_tcol.h \
-    misc.h
-HEADERS += $$PWD/../../src/csc_debug.h
-HEADERS += $$PWD/../../src/csc_malloc_file.h
-HEADERS += $$PWD/../../src/csc_basic.h
-HEADERS += $$PWD/../../src/csc_vk.h
-HEADERS += $$PWD/../../src/csc_glfw.h
+HEADERS += misc.h
 HEADERS += shader.vert
 HEADERS += shader.frag
 
