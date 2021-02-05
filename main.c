@@ -1,5 +1,3 @@
-#define VK_USE_PLATFORM_WIN32_KHR
-#define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 #include <vulkan/vulkan.h>
 
@@ -30,6 +28,7 @@ void run()
 	VkSemaphore renderFinishedSemaphores [MAX_FRAMES_IN_FLIGHT];
 	VkFence inFlightFences [MAX_FRAMES_IN_FLIGHT];
 	VkCommandPool commandPool;
+	vk_enumerate_instance_extension_properties_print();
 	createInstance (&instance);
 	setupDebugMessenger (instance, &debugMessenger);
 	if (glfwCreateWindowSurface (instance, window, NULL, &surface) != VK_SUCCESS)

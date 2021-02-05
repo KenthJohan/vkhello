@@ -62,25 +62,17 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback
 (VkDebugUtilsMessageSeverityFlagBitsEXT severity, VkDebugUtilsMessageTypeFlagsEXT messageType, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData)
 {
 	(VkDebugUtilsMessengerCallbackDataEXT*)pUserData;
-	switch (messageType)
-	{
-	case VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT:
-		fprintf (stdout, "GENERAL,");
-		break;
-	case VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT:
-		fprintf (stdout, "VALIDATION,");
-		break;
-	case VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT:
-		fprintf (stdout, "PERFORMANCE,");
-		break;
-	case VK_DEBUG_UTILS_MESSAGE_TYPE_FLAG_BITS_MAX_ENUM_EXT:
-		fprintf (stdout, "FLAG_BITS_MAX_ENUM,");
-		break;
-	}
-	if (severity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT) {fprintf (stdout, "VERBOSE|");}
-	if (severity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT) {fprintf (stdout, "INFO|");}
-	if (severity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) {fprintf (stdout, "WARNING|");}
-	if (severity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) {fprintf (stdout, "ERROR");}
+	fprintf (stdout, "messageType");
+	if (messageType & VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT) {fprintf (stdout, "|GENERAL");}
+	if (messageType & VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT) {fprintf (stdout, "|VALIDATION");}
+	if (messageType & VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT) {fprintf (stdout, "|PERFORMANCE");}
+	if (messageType & VK_DEBUG_UTILS_MESSAGE_TYPE_FLAG_BITS_MAX_ENUM_EXT) {fprintf (stdout, "|FLAG_BITS_MAX_ENUM");}
+	fprintf (stdout, "\n");
+	fprintf (stdout, "severity");
+	if (severity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT) {fprintf (stdout, "|VERBOSE");}
+	if (severity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT) {fprintf (stdout, "|INFO");}
+	if (severity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) {fprintf (stdout, "|WARNING");}
+	if (severity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) {fprintf (stdout, "|ERROR");}
 	fprintf (stdout, ":");
 	fprintf (stdout, "validation layer: %s\n", pCallbackData->pMessage);
 	return VK_FALSE;
@@ -584,6 +576,12 @@ void drawFrame (struct csc_vk_device * dev, struct csc_vk_swapchain * swapchain,
 
 	uint32_t imageIndex;
 	vkAcquireNextImageKHR (dev->logical, swapchain->swapchain, UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
+	/*
+	if (imagesInFlight[imageIndex] != VK_NULL_HANDLE)
+	{
+		vkWaitForFences (dev->logical, 1, &imagesInFlight[imageIndex], VK_TRUE, UINT64_MAX);
+	}
+	*/
 
 	VkSubmitInfo submitInfo = {0};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -744,6 +742,7 @@ void createSwapChain (struct csc_vk_device * dev, VkSurfaceKHR surface, struct c
 	}
 
 	vkGetSwapchainImagesKHR (dev->logical, swapchain->swapchain, &swapchain->count, NULL);
+	TRACEF("vkGetSwapchainImagesKHR pSwapchainImageCount %i", swapchain->count);
 	swapchain->images = (VkImage*)malloc (sizeof (VkImage) * swapchain->count);
 	swapchain->imageviews = (VkImageView*)malloc (sizeof (VkImageView) * swapchain->count);
 	swapchain->framebuffers = (VkFramebuffer*)malloc (sizeof (VkFramebuffer) * swapchain->count);
